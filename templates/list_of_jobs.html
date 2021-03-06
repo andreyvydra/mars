@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Журнал работ</h1>
+{% for item in jobs %}
+<div>
+    <table width="100%">
+        <tr bgcolor="#aaaaaa">
+            <th width="40%">Title of activity</th>
+            <th width="15%">Team leader</th>
+            <th width="15%">Duration</th>
+            <th width="15%">Collaborators</th>
+            <th width="15%">Is finished</th>
+        </tr>
+        <tr>
+            <td>{{item.job}}</td>
+            <td>{{item.users.name}} {{item.users.surname}}</td>
+            <td>{{item.work_size}}</td>
+            <td>{{item.collaborators}}</td>
+            <td>{{item.is_finished}}</td>
+        </tr>
+    </table>
+</div>
+<br>
+{% endfor %}
+{% endblock %}
