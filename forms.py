@@ -22,3 +22,12 @@ class LoginForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
+
+
+class JobsForm(FlaskForm):
+    title = StringField('Заголовок работы', validators=[DataRequired()])
+    team_leader = StringField('ID Руководителя команды', validators=[DataRequired()])
+    work_size = StringField('Время работы (в часах)', validators=[DataRequired()])
+    collaborators = StringField('Соучастники', validators=[DataRequired()])
+    is_finished = BooleanField('Работа завершена?')
+    submit = SubmitField('Применить')

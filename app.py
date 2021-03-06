@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, make_response, session
 from data.jobs import Jobs
 from data.users import User
 from data import db_session
-from form import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, JobsForm
 from werkzeug.utils import redirect
-from flask_login import LoginManager, login_user, login_required, logout_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -96,7 +96,23 @@ def logout():
     return redirect("/")
 
 
+@app.route('/jobs',  methods=['GET', 'POST'])
+@login_required
+def add_jobs():
+    form = JobsForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        job = Jobs(job=form.title.data, team_leader=form.team_leader.data,
+                   work_size=form.work_size.data,
+                   collaborators=form.collaborators.data,
+                   is_finished=form.is_finished.data)
+        db_sess.add(job)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('job.html', title='Добавление работы',
+                           form=form)
+
+
 if __name__ == '__main__':
     db_session.global_init("db/blogs.db")
-    db_sess = db_session.create_session()
     app.run(host='127.0.0.1', port=5050)
