@@ -122,9 +122,10 @@ def edit_jobs(id):
     form = JobsForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
-        job = db_sess.query(Jobs).filter(Jobs.id == id,
-                                         Jobs.user_id == current_user.id
-                                         ).first()
+        if current_user.id == 1:
+            job = db_sess.query(Jobs).filter(Jobs.id == id).first()
+        else:
+            job = db_sess.query(Jobs).filter(Jobs.id == id, current_user.id == Jobs.user_id).first()
         if job:
             form.title.data = job.job
             form.team_leader.data = job.team_leader
@@ -135,9 +136,10 @@ def edit_jobs(id):
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        job = db_sess.query(Jobs).filter(Jobs.id == id,
-                                         Jobs.user_id == current_user.id
-                                         ).first()
+        if current_user.id == 1:
+            job = db_sess.query(Jobs).filter(Jobs.id == id).first()
+        else:
+            job = db_sess.query(Jobs).filter(Jobs.id == id, current_user.id == Jobs.user_id).first()
         if job:
             job.job = form.title.data
             job.team_leader = form.team_leader.data

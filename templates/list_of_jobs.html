@@ -28,7 +28,7 @@
         </tr>
         <tr>
             <td bgcolor="#cccccc">
-            {% if current_user.is_authenticated and current_user.id == item.user_id %}
+            {% if current_user.is_authenticated and (current_user.id == item.user_id or current_user.id == 1) %}
                 <div>
                     <a href="/job/{{ item.id }}" class="btn btn-warning">
                         Изменить
