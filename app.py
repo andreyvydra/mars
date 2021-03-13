@@ -1,14 +1,19 @@
-from flask import Flask, render_template, request, make_response, session
+from flask import Flask, render_template, request, make_response, session, jsonify
 from werkzeug.exceptions import abort
 
 from data.jobs import Jobs
 from data.users import User
-from data import db_session
+from data import db_session, jobs_api
 from forms import RegisterForm, LoginForm, JobsForm
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
+from flask_restful import reqparse, abort, Api, Resource
+import user_resources
+
+
 app = Flask(__name__)
+api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -171,6 +176,13 @@ def news_delete(id):
     return redirect('/')
 
 
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+
 if __name__ == '__main__':
     db_session.global_init("db/blogs.db")
+    api.add_resource(user_resources.UserResource, '/api/v2/users/<int:user_id>')
+    api.add_resource(user_resources.UserListResource, '/api/v2/users/')
     app.run(host='127.0.0.1', port=5050)
