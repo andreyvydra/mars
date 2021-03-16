@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request, make_response, session, jsonify
 from werkzeug.exceptions import abort
 
@@ -188,4 +190,5 @@ if __name__ == '__main__':
     api.add_resource(user_resources.UserListResource, '/api/v2/users/')
     api.add_resource(jobs_resources.JobsListResource, '/api/v2/jobs/')
     api.add_resource(jobs_resources.JobsResource, '/api/v2/jobs/<int:jobs_id>')
-    app.run(host='127.0.0.1', port=5050)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
