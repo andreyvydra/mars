@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, make_response, session, jsonify
 from werkzeug.exceptions import abort
 
+import jobs_resources
 from data.jobs import Jobs
 from data.users import User
 from data import db_session, jobs_api
@@ -185,4 +186,6 @@ if __name__ == '__main__':
     db_session.global_init("db/blogs.db")
     api.add_resource(user_resources.UserResource, '/api/v2/users/<int:user_id>')
     api.add_resource(user_resources.UserListResource, '/api/v2/users/')
+    api.add_resource(jobs_resources.JobsListResource, '/api/v2/jobs/')
+    api.add_resource(jobs_resources.JobsResource, '/api/v2/jobs/<int:jobs_id>')
     app.run(host='127.0.0.1', port=5050)

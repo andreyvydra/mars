@@ -45,6 +45,7 @@ class UserListResource(Resource):
 
     def post(self):
         args = parser.parse_args()
+        abort_if_email_found(args['email'])
         session = db_session.create_session()
         user = User(
             surname=args['surname'],
@@ -65,6 +66,13 @@ def abort_if_user_not_found(user_id):
     user = session.query(User).get(user_id)
     if not user:
         abort(404, message=f"User {user_id} not found")
+
+
+def abort_if_email_found(email):
+    session = db_session.create_session()
+    user = session.query(User).get(email)
+    if user:
+        abort(404, message=f"Email was found")
 
 
 parser = reqparse.RequestParser()
