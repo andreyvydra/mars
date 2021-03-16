@@ -24,6 +24,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime)
 
     jobs = orm.relation("Jobs", back_populates='user')
+    departments = orm.relation("Departments", back_populates='user')
 
     def __repr__(self):
         return f'<Colonist> {User.id} {User.surname} {User.name}'
