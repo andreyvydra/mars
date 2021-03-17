@@ -14,5 +14,6 @@ class Departments(SqlAlchemyBase, SerializerMixin):
     chief = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     members = sqlalchemy.Column(sqlalchemy.String)
     email = sqlalchemy.Column(sqlalchemy.String)
+    user_id = sqlalchemy.Column(sqlalchemy.Integer)
 
     user = orm.relation("User")

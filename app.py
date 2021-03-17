@@ -4,16 +4,16 @@ from flask import Flask, render_template, request, make_response, session, jsoni
 from werkzeug.exceptions import abort
 
 import jobs_resources
+from data.departments import Departments
 from data.jobs import Jobs
 from data.users import User
 from data import db_session, jobs_api
-from forms import RegisterForm, LoginForm, JobsForm
+from forms import RegisterForm, LoginForm, JobsForm, DepartmentsForm
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 from flask_restful import reqparse, abort, Api, Resource
 import user_resources
-
 
 app = Flask(__name__)
 api = Api(app)
@@ -27,6 +27,87 @@ def index():
     db_sess = db_session.create_session()
     jobs = db_sess.query(Jobs).all()
     return render_template("list_of_jobs.html", jobs=jobs)
+
+
+@app.route("/departments")
+def departments():
+    db_sess = db_session.create_session()
+    deps = db_sess.query(Departments).all()
+    return render_template("list_of_departments.html", departments=deps)
+
+
+@app.route("/department", methods=['POST', 'GET'])
+def department():
+    form = DepartmentsForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        dep = Departments(
+            title=form.title.data,
+            chief=form.chief.data,
+            members=form.members.data,
+            email=form.email.data,
+            user_id=current_user.id
+        )
+        db_sess.add(dep)
+        db_sess.commit()
+        return redirect('/departments')
+    return render_template('department.html', title='Добавление департамента',
+                           form=form)
+
+
+@app.route('/department/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_department(id):
+    form = DepartmentsForm()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        if current_user.id == 1:
+            dep = db_sess.query(Departments).filter(Departments.id == id).first()
+        else:
+            dep = db_sess.query(Departments).filter(Departments.id == id,
+                                                    current_user.id == Departments.user_id).first()
+        if dep:
+            form.title.data = dep.title
+            form.chief.data = dep.chief
+            form.members.data = dep.members
+            form.email.data = dep.email
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        if current_user.id == 1:
+            dep = db_sess.query(Departments).filter(Departments.id == id).first()
+        else:
+            dep = db_sess.query(Departments).filter(Departments.id == id,
+                                                    current_user.id == Departments.user_id).first()
+        if dep:
+            dep.title = form.title.data
+            dep.chief = form.chief.data
+            dep.members = form.members.data
+            dep.email = form.email.data
+            db_sess.commit()
+            return redirect('/departments')
+        else:
+            abort(404)
+    return render_template('department.html',
+                           title='Редактирование департамента',
+                           form=form
+                           )
+
+
+@app.route('/department_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_department(id):
+    db_sess = db_session.create_session()
+    dep = db_sess.query(Departments).filter(Departments.id == id,
+                                            Departments.user_id == current_user.id
+                                            ).first()
+    if dep:
+        db_sess.delete(dep)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/departments')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -190,5 +271,4 @@ if __name__ == '__main__':
     api.add_resource(user_resources.UserListResource, '/api/v2/users/')
     api.add_resource(jobs_resources.JobsListResource, '/api/v2/jobs/')
     api.add_resource(jobs_resources.JobsResource, '/api/v2/jobs/<int:jobs_id>')
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='127.0.0.1', port=8000)
