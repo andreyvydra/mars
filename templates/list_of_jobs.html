@@ -15,16 +15,18 @@
     <table width="100%">
         <tr bgcolor="#aaaaaa">
             <th width="40%">Title of activity</th>
-            <th width="15%">Team leader</th>
-            <th width="15%">Duration</th>
-            <th width="15%">Collaborators</th>
-            <th width="15%">Is finished</th>
+            <th width="12%">Team leader</th>
+            <th width="12%">Duration</th>
+            <th width="12%">Collaborators</th>
+            <th width="12%">Hazard Category</th>
+            <th width="12%">Is finished</th>
         </tr>
         <tr bgcolor="#cccccc">
             <td>{{item.job}}</td>
             <td>{{item.user.name}} {{item.user.surname}}</td>
             <td>{{item.work_size}}</td>
             <td>{{item.collaborators}}</td>
+            <td>{{item.hazard_category}}</td>
             <td>{{item.is_finished}}</td>
         </tr>
         <tr>
