@@ -1,13 +1,15 @@
 import os
 
 from flask import Flask, render_template, request, make_response, session, jsonify
+from requests import get
 from werkzeug.exceptions import abort
+from geocoder import *
 
 import jobs_resources
 from data.departments import Departments
 from data.jobs import Jobs
 from data.users import User
-from data import db_session, jobs_api
+from data import db_session, user_api
 from forms import RegisterForm, LoginForm, JobsForm, DepartmentsForm
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -260,6 +262,25 @@ def news_delete(id):
     return redirect('/')
 
 
+@app.route('/users_show/<int:user_id>')
+def users_show(user_id):
+    response_json = get(f'http://127.0.0.1:8000/api/users/{user_id}').json()
+    print(response_json)
+    if 'address' in response_json:
+        address = response_json['address']
+    toponym_longitude, toponym_lattitude = get_coordinates(response_json['address'] or 'Москва')
+    ll = ",".join([str(toponym_longitude), str(toponym_lattitude)])
+
+    toponym_points = get_points(response_json['address'])
+    spn = get_spn(*toponym_points)
+
+    show_map(ll, spn)
+
+    render_template('users_show.html',
+                    name=response_json['name']
+                    )
+
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
@@ -271,4 +292,5 @@ if __name__ == '__main__':
     api.add_resource(user_resources.UserListResource, '/api/v2/users/')
     api.add_resource(jobs_resources.JobsListResource, '/api/v2/jobs/')
     api.add_resource(jobs_resources.JobsResource, '/api/v2/jobs/<int:jobs_id>')
+    app.register_blueprint(user_api.blueprint)
     app.run(host='127.0.0.1', port=8000)
