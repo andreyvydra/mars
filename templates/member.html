@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    {% set member = members | random %}
+    <h1>{{ member.name }} {{ member.surname }}</h1>
+    <img src="{{ member.photo }}">
+    <p>{{ member.speciality | join(', ') }}</p>
+</div>
+{% endblock %}

@@ -1,3 +1,4 @@
+import json
 import os
 
 from flask import Flask, render_template, request, make_response, session, jsonify
@@ -309,6 +310,13 @@ def galery():
         file = request.files['file']
         file.save(f'static/img/galery/{file.filename}')
         return render_template('carousel.html')
+
+
+@app.route('/member', methods=['GET'])
+def member():
+    with open('templates/members.json') as file:
+        members = json.load(file)
+    return render_template('member.html', members=members)
 
 
 @app.errorhandler(404)

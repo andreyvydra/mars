@@ -1,0 +1,28 @@
+[
+  {
+    "name": "Andrey",
+    "surname": "Vydra",
+    "speciality": [
+      "Take off and landing operations manager"
+    ],
+    "photo": "../static/img/alien_2.jpg"
+  },
+  {
+    "name": "Vasiliy",
+    "surname": "Pupkin",
+    "speciality": [
+      "Stormtrooper",
+      "Sniper"
+    ],
+    "photo": "../static/img/alien_1.png"
+  },
+  {
+    "name": "Alexey",
+    "surname": "Kaznacheev",
+    "speciality": [
+      "Chemist",
+      "Radiation protection specialist"
+    ],
+    "photo": "../static/img/alien_1.png"
+  }
+]
