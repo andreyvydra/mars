@@ -297,6 +297,20 @@ def load_photo():
         return render_template('load_photo.html')
 
 
+@app.route('/galery', methods=['POST', 'GET'])
+def galery():
+    if request.method == 'GET':
+        file_names = []
+        for paths, dirs, files in os.walk(os.getcwd() + '/static/img/galery'):
+            for file in files:
+                file_names.append(f'../static/img/galery/{file}')
+        return render_template('carousel.html', files=file_names)
+    elif request.method == 'POST':
+        file = request.files['file']
+        file.save(f'static/img/galery/{file.filename}')
+        return render_template('carousel.html')
+
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
