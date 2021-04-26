@@ -265,20 +265,26 @@ def news_delete(id):
 @app.route('/users_show/<int:user_id>')
 def users_show(user_id):
     response_json = get(f'http://127.0.0.1:8000/api/users/{user_id}').json()
-    print(response_json)
-    if 'address' in response_json:
-        address = response_json['address']
-    toponym_longitude, toponym_lattitude = get_coordinates(response_json['address'] or 'Москва')
+
+    if 'error' in response_json:
+        return jsonify(response_json)
+    user = response_json['user']
+    if 'address' in user:
+        address = user['address']
+    else:
+        address = 'Москва'
+        user['address'] = address
+
+    toponym_longitude, toponym_lattitude = get_coordinates(address)
     ll = ",".join([str(toponym_longitude), str(toponym_lattitude)])
 
-    toponym_points = get_points(response_json['address'])
-    spn = get_spn(*toponym_points)
+    save_map(ll, '0.06,0.06', l='sat')
 
-    show_map(ll, spn)
+    user['city'] = get_city(address)
 
-    render_template('users_show.html',
-                    name=response_json['name']
-                    )
+    return render_template('users_show.html',
+                           user=user
+                           )
 
 
 @app.errorhandler(404)
