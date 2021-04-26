@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1>Приложите фотографию</h1>
+    <form method="post" enctype="multipart/form-data">
+        <label for="photo">Выберите файл</label>
+        <input style="margin-left: 35%" type="file" class="form-control-file" id="photo" name="file"><br>
+        <img src="../static/img/photo.png"><br>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+</div>
+{% endblock %}

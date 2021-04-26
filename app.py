@@ -287,6 +287,16 @@ def users_show(user_id):
                            )
 
 
+@app.route('/load_photo', methods=['POST', 'GET'])
+def load_photo():
+    if request.method == 'GET':
+        return render_template('load_photo.html')
+    elif request.method == 'POST':
+        file = request.files['file']
+        file.save('static/img/photo.png')
+        return render_template('load_photo.html')
+
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
